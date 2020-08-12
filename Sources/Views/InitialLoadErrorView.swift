@@ -17,9 +17,16 @@ public protocol InitialLoadErrorViewDelegate {
   func initialLoadErrorView(_ errorView: InitialLoadErrorView, didTapErrorButton: UIButton)
 }
 
+public enum InitialLoadErrorShowPriority {
+  case error
+  case text
+}
+
 public class InitialLoadErrorView: UIView {
 
+  public var errorShowPriority: InitialLoadErrorShowPriority = .error
   public var error: NSError? = nil
+  public var errorMessage: String? = nil
   public var label: UILabel? = nil
   public var button: UIButton? = nil
   public var delegate: InitialLoadErrorViewDelegate? = nil
@@ -90,7 +97,10 @@ public class InitialLoadErrorView: UIView {
     let label = UILabel()
     label.translatesAutoresizingMaskIntoConstraints = false
     label.textAlignment = .center
-    label.text = error?.localizedDescription ?? "No items founds."
+    let errorText = errorShowPriority == .error ?
+      (error?.localizedDescription ?? "No items found") :
+      (errorMessage ?? "No items found")
+    label.text = errorText
     label.sizeToFit()
     label.setWidthConstraintToCurrent()
     label.setHeightConstraintToCurrent()
